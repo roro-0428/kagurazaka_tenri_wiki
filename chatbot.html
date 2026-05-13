@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神楽坂天伶 Wiki ガイド</title>
+    <style>
+        /* 調整可能な変数 */
+        :root {
+            --primary-pink: #f4cfdf;    /* メインのピンク（ヘッダー・ユーザー発言） */
+            --accent-pink: #d9a7c7;     /* アクセント（ボタン） */
+            --soft-bg: #fff5f8;         /* 背景色 */
+            --text-color: #5a4a4a;      /* 文字色 */
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: var(--soft-bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-color);
+        }
+
+        /* チャットの外枠 */
+        #chat-container {
+            width: 400px;
+            max-width: 90%;
+            height: 600px;
+            background: var(--white);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(244, 207, 223, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid var(--primary-pink);
+        }
+
+        /* ヘッダー部分 */
+        #chat-header {
+            background-color: var(--primary-pink);
+            color: var(--text-color);
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* メッセージ表示エリア */
+        #chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-image: radial-gradient(var(--soft-bg) 10%, transparent 10%);
+            background-size: 20px 20px;
+        }
+
+        /* 吹き出しの共通スタイル */
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ボットの吹き出し */
+        .bot {
+            align-self: flex-start;
+            background-color: #fce4ec;
+            color: var(--text-color);
+            border-bottom-left-radius: 5px;
+        }
+
+        /* ユーザーの吹き出し */
+        .user {
+            align-self: flex-end;
+            background-color: var(--primary-pink);
+            color: var(--text-color);
+            border-bottom-right-radius: 5px;
+        }
+
+        /* 入力エリア */
+        #chat-input-area {
+            padding: 15px;
+            background: var(--white);
+            border-top: 2px solid var(--soft-bg);
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid var(--primary-pink);
+            border-radius: 25px;
+            outline: none;
+        }
+
+        #send-btn {
+            background-color: var(--accent-pink);
+            color: var(--white);
+            border: none;
+            padding: 0 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <div id="chat-header">🍀 神楽坂天伶 Wiki ガイド 🍀</div>
+    <div id="chat-messages">
+        <div class="message bot">こんにちは！神楽坂天伶 Wikiの情報をご案内します。知りたいことを教えてくださいね。</div>
+    </div>
+    <div id="chat-input-area">
+        <input type="text" id="user-input" placeholder="メッセージを入力..." onkeypress="if(event.keyCode==13) sendMessage()">
+        <button id="send-btn" onclick="sendMessage()">送信</button>
+    </div>
+</div>
+
+<script>
+    /* ナレッジベース：ここに追加情報を記述します */
+    const knowledgeBase = {
+        "神楽坂天伶": "神楽坂天伶（かぐらざかてんり）は、神楽坂にある拠点に関する情報をまとめたWikiサイトです。",
+        "アクセス": "詳細はWikiの「交通案内」を確認してください。神楽坂周辺の便利なアクセス情報が載っています。",
+        "行事": "祭典や勉強会のスケジュールは、神楽坂天伶 Wikiのトップページから確認可能です。",
+        "挨拶": "こんにちは！お力になれることがあれば教えてください🍀",
+        "wiki": "公式サイト（Seesaa Wiki）はこちらです：https://seesaawiki.jp/kagurazaka_tenri/"
+    };
+
+    function sendMessage() {
+        const input = document.getElementById('user-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        input.value = '';
+
+        // 返答までの待機時間（0.6秒）
+        setTimeout(() => {
+            let reply = "すみません、その点についてはまだ学習中です。神楽坂天伶 Wiki（https://seesaawiki.jp/kagurazaka_tenri/）で最新情報を確認してみてください。";
+            
+            for (let key in knowledgeBase) {
+                if (text.includes(key)) {
+                    reply = knowledgeBase[key];
+                    break;
+                }
+            }
+            addMessage(reply, 'bot');
+        }, 600);
+    }
+
+    function addMessage(text, sender) {
+        const messagesDiv = document.getElementById('chat-messages');
+        const msg = document.createElement('div');
+        msg.classList.add('message', sender);
+        msg.innerText = text;
+        messagesDiv.appendChild(msg);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
