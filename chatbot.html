@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>神楽坂天伶 Wiki ガイド</title>
+    <!-- data.jsを先に読み込む -->
+    <script src="data.js"></script>
+    <style>
+        :root { --primary-pink: #f4cfdf; --soft-bg: #fff5f8; --text-color: #5a4a4a; }
+        body { font-family: sans-serif; background-color: var(--soft-bg); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: var(--text-color); }
+        #chat-container { width: 400px; height: 600px; background: white; border-radius: 25px; display: flex; flex-direction: column; border: 2px solid var(--primary-pink); overflow: hidden; }
+        #chat-header { background: var(--primary-pink); padding: 20px; text-align: center; font-weight: bold; }
+        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { padding: 12px 18px; border-radius: 20px; font-size: 14px; max-width: 80%; line-height: 1.6; }
+        .bot { align-self: flex-start; background: #fce4ec; border-bottom-left-radius: 5px; }
+        .user { align-self: flex-end; background: var(--primary-pink); border-bottom-right-radius: 5px; }
+        #chat-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #eee; }
+        input { flex: 1; padding: 12px; border-radius: 25px; border: 1px solid var(--primary-pink); outline: none; }
+        button { background: #d9a7c7; color: white; border: none; padding: 0 20px; border-radius: 25px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <div id="chat-header">🍀 神楽坂天伶 Wiki ガイド 🍀</div>
+    <div id="chat-messages">
+        <div class="message bot">こんにちは！データを読み込みました。出身地や特技を聞いてくださいね。</div>
+    </div>
+    <div id="chat-input-area">
+        <input type="text" id="user-input" placeholder="質問を入力..." onkeypress="if(event.keyCode==13) sendMessage()">
+        <button onclick="sendMessage()">送信</button>
+    </div>
+</div>
+
+<script>
+    // knowledgeBaseはdata.jsから自動的に読み込まれます
+    function sendMessage() {
+        const input = document.getElementById('user-input');
+        const text = input.value.trim();
+        if (!text || typeof knowledgeBase === 'undefined') return;
+
+        addMessage(text, 'user');
+        input.value = '';
+
+        setTimeout(() => {
+            let reply = "Wiki（https://seesaawiki.jp/kagurazaka_tenri/）で確認してみてください🍀";
+            
+            for (let key in knowledgeBase) {
+                if (text.includes(key)) {
+                    const value = knowledgeBase[key];
+                    reply = (value !== "情報なし") ? `${key}は「${value}」です。` : `${key}の情報はまだありませんでした。`;
+                    break;
+                }
+            }
+            addMessage(reply, 'bot');
+        }, 600);
+    }
+
+    function addMessage(text, sender) {
+        const div = document.getElementById('chat-messages');
+        const msg = document.createElement('div');
+        msg.className = `message ${sender}`;
+        msg.innerText = text;
+        div.appendChild(msg);
+        div.scrollTop = div.scrollHeight;
+    }
+</script>
+</body>
+</html>
