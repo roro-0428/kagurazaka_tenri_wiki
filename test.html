@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>キーワード応答チャット</title>
+    <style>
+        /* チャット窓のスタイル */
+        #chat-container { width: 350px; height: 500px; border: 1px solid #ccc; display: flex; flex-direction: column; font-family: sans-serif; }
+        #messages { flex-grow: 1; overflow-y: auto; padding: 10px; background: #f9f9f9; }
+        #input-area { display: flex; border-top: 1px solid #ccc; }
+        input { flex-grow: 1; padding: 10px; border: none; }
+        button { padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
+        .bot-msg { background: #e2e2e2; padding: 8px; border-radius: 5px; margin: 5px 0; align-self: flex-start; }
+        .user-msg { background: #007bff; color: white; padding: 8px; border-radius: 5px; margin: 5px 0; align-self: flex-end; text-align: right; }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <div id="messages"></div>
+    <div id="input-area">
+        <input type="text" id="user-input" placeholder="キーワードを入力...">
+        <button onclick="sendMessage()">送信</button>
+    </div>
+</div>
+
+<script>
+// Wikiの情報を元にした辞書データ
+const botDictionary = [
+    { keywords: ["企画", "コラボ"], answer: "最新のコラボ企画はWikiの「コラボ企画」ページをご確認ください！" },
+    { keywords: ["メンバー", "誰"], answer: "風切あやとさん、アシュメ・エクレールさん、夜凪りょーさん、神楽坂天理さん、真田さくやさんが参加予定です。" },
+    { keywords: ["画像", "イラスト"], answer: "イラストはWiki内で公開されています。学習防止のため、こちらから直接表示はせずURLをご案内します：[WikiのURL]" }
+];
+
+function sendMessage() {
+    const input = document.getElementById('user-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, 'user-msg');
+    input.value = '';
+
+    // キーワード判定
+    let response = "すみません、そのキーワードは分かりません。";
+    for (const item of botDictionary) {
+        if (item.keywords.some(key => text.includes(key))) {
+            response = item.answer;
+            break;
+        }
+    }
+    
+    setTimeout(() => addMessage(response, 'bot-msg'), 500);
+}
+
+function addMessage(text, className) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = className;
+    msgDiv.textContent = text;
+    document.getElementById('messages').appendChild(msgDiv);
+    document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+}
+</script>
+
+</body>
+</html>
